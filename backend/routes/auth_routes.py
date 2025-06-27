@@ -27,7 +27,7 @@ def signup():
 @bp.route("/login", methods=["POST"])
 def login():
     data=request.json
-    identifier=data.get("identifier") #allowa the user to enter either username or email
+    identifier=data.get("identifier") #allows the user to enter either username or email
     password=data.get("password")
 
     user=User.query.filter(or_(User.username == identifier) | (User.email == identifier)).first()

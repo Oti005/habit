@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"; 
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import "../styles/Dashboard.css";
 
 const Dashboard = () => {
@@ -10,6 +11,7 @@ const Dashboard = () => {
   const [categories, setCategories] = useState([]);
   const [weeklyData, setWeeklyData] = useState([]);
   const [quoteIndex, setQuoteIndex] = useState(0);
+  const navigate = useNavigate();
 
   const quotes = [
     "You miss 100% of the shots you don't take.",
@@ -76,8 +78,20 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Logout handler
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
+
   return (
     <div>
+      <header className="dashboard-header">
+        <div className="dashboard-header-inner">
+          <h2 className="dashboard-title">Dashboard</h2>
+          <button className="dashboard-logout-btn" onClick={handleLogout}>Log Out</button>
+        </div>
+      </header>
       <div className="dashboard-bg-shape one"></div>
 
       <div className="dashboard-wrapper">
@@ -116,7 +130,7 @@ const Dashboard = () => {
               <XAxis dataKey="day" />
               <YAxis allowDecimals={false} />
               <Tooltip />
-              <Line type="monotone" dataKey="count" stroke="#4cc9f0" strokeWidth={3} dot={{ r: 5 }} activeDot={{ r: 8 }} />
+              <Line type="monotone" dataKey="count" stroke="#414345" strokeWidth={3} dot={{ r: 5 }} activeDot={{ r: 8 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>
