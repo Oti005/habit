@@ -152,3 +152,22 @@ body {
   color: #232526 !important;
   font-weight: 700;
 }
+
+.dashboard-nav-btn{
+  background: #fff;
+  color: black;
+  border: 1.5pex solid #232526;
+  border-radius: 8px;
+  padding: 0.7rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+
+.dashboard-nav-btn:hover{
+  background: #232526;
+  color: #fff;
+  border: 1.5px solid #232526;
+}

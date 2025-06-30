@@ -34,7 +34,7 @@ const SignupPage=()=>{
 
          if (response.ok){
             alert("Signup successful");
-            navigate("/login");
+            navigate("/");
          }else{
             alert(data.error || data.message || "Signup failed");
          }
@@ -85,7 +85,7 @@ const SignupPage=()=>{
 
                 <button type="submit">Sign Up</button>
             </form>
-            <p>Already have an account?<a href="/login">Login</a></p>
+            <p>Already have an account?<a href="/">Login</a></p>
         </div>
     );
 };

@@ -89,6 +89,12 @@ const Dashboard = () => {
       <header className="dashboard-header">
         <div className="dashboard-header-inner">
           <h2 className="dashboard-title">Dashboard</h2>
+          <div>
+            <button 
+            className="dashboard-nav-btn"
+            onClick={() => navigate("/habits")}
+            style={{marginRight: "irem"}}> My habits</button>
+          </div>
           <button className="dashboard-logout-btn" onClick={handleLogout}>Log Out</button>
         </div>
       </header>
