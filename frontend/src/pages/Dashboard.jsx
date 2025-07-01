@@ -26,13 +26,33 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const habitsRes = await fetch("http://localhost:5000/api/habits");
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.error("No token found. Please log in.");
+          navigate("/login");
+          return;
+        }
+
+
+        const habitsRes = await fetch("http://localhost:5000/api/habits", {
+          headers: {
+            Authorization: 'Bearer ${token}',
+          }
+        });
         const habitsData = await habitsRes.json();
 
-        const logsRes = await fetch("http://localhost:5000/api/habits/logs");
+        const logsRes = await fetch("http://localhost:5000/api/habits/logs", {
+          headers: {
+            Authorization: 'Bearer ${token}',
+          }
+        });
         const logsData = await logsRes.json();
 
-        const categoriesRes = await fetch("http://localhost:5000/api/categories");
+        const categoriesRes = await fetch("http://localhost:5000/api/categories", {
+          headers: {
+            Authorization: 'Bearer ${token}',
+          }
+        });
         const categoriesData = await categoriesRes.json();
 
         setHabits(habitsData);
@@ -78,7 +98,7 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Logout handler
+  // Logout handling
   const handleLogout = () => {
     localStorage.clear();
     navigate("/login");
@@ -120,7 +140,7 @@ const Dashboard = () => {
       <div className="dashboard-wrapper">
         {habits.map((habit) => (
           <motion.div key={habit.id} className="dashboard-card" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-            <h3>{habit.title}</h3>
+            <h3>{habit.name}</h3>
             <p>{habit.description}</p>
             <p style={{ fontSize: "0.875rem" }}>Frequency: {habit.frequency}</p>
           </motion.div>

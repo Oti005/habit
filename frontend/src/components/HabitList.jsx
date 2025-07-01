@@ -5,7 +5,7 @@ const HabitList = ({ habits}) => {
     return (
         <div className="grid gap-4">
             {habits.length === 0 ? (
-                <p>No habits yet. Add one!</p>
+                <p className="text-gray-500">No habits yet. Add one!</p>
             ): (
                 habits.map((habit) => <HabitItem key={habit.id} habit={habit}/>)
             )}

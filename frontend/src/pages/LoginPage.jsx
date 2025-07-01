@@ -9,7 +9,7 @@ const LoginPage=()=>{
 
     const handleLogin=async(e)=>{
         e.preventDefault();
-   
+        console.log("identifier:", identifier);
 
     try {
         const response = await fetch("http://localhost:5000/api/auth/login",{
@@ -25,11 +25,11 @@ const LoginPage=()=>{
         if (response.ok){
             alert("Login Successful");
             console.log("identifier:", data.identifier);
-            localStorage.setItem("identifier", data.identifier);
+            localStorage.setItem("token", data.token);
             navigate("/dashboard"); 
         }
         else {
-            alert(data.error || "Login Failed")
+            alert(data.message || "Login Failed")
         }
     }
     catch (error){
