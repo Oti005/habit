@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import "../styles/auth.css";
 
 const SignupPage=()=>{
@@ -7,6 +8,8 @@ const SignupPage=()=>{
     const[username, setUsername]=useState("");
     const [password, setPassword]=useState("");
     const [confirmPassword, setConfirmPassword]=useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const navigate=useNavigate();
 
     const handleSignup=async(e)=>{
@@ -31,7 +34,6 @@ const SignupPage=()=>{
 
          const data = await response.json();
 
-
          if (response.ok){
             alert("Signup successful");
             navigate("/");
@@ -50,37 +52,58 @@ const SignupPage=()=>{
             <h2>Sign Up</h2>
             <form onSubmit={handleSignup}>
                 <input
-                type="email"
-                placeholder="Enter email"
-                onChange={(e)=> setEmail(e.target.value)}
-                value={email}
-                required
+                    type="email"
+                    placeholder="Enter email"
+                    onChange={(e)=> setEmail(e.target.value)}
+                    value={email}
+                    required
                 />
                 <br/>
                 <input 
-                type="text"
-                placeholder="Enter username"
-                onChange={(e)=>setUsername(e.target.value)}
-                value={username}
-                required
+                    type="text"
+                    placeholder="Enter username"
+                    onChange={(e)=>setUsername(e.target.value)}
+                    value={username}
+                    required
                 />
                 <br/>
-                <input 
-                type="password"
-                placeholder="Enter password"
-                onChange={(e)=> setPassword(e.target.value)} 
-                value={password}
-                required
-                />
+                <div className="password-input-wrapper">
+                    <input 
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Enter password"
+                        onChange={(e)=> setPassword(e.target.value)} 
+                        value={password}
+                        required
+                    />
+                    <button
+                        type="button"
+                        className="show-password-btn"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        tabIndex={-1}
+                        aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                        {showPassword ? <EyeOff size={22} /> : <Eye size={22} />}
+                    </button>
+                </div>
                 <br/>
-
-                <input 
-                type="password"
-                placeholder="Enter password again"
-                onChange={(e)=> setConfirmPassword(e.target.value)} 
-                value={confirmPassword}
-                required
-                />
+                <div className="password-input-wrapper">
+                    <input 
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="Enter password again"
+                        onChange={(e)=> setConfirmPassword(e.target.value)} 
+                        value={confirmPassword}
+                        required
+                    />
+                    <button
+                        type="button"
+                        className="show-password-btn"
+                        onClick={() => setShowConfirmPassword((prev) => !prev)}
+                        tabIndex={-1}
+                        aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                    >
+                        {showConfirmPassword ? <EyeOff size={22} /> : <Eye size={22} />}
+                    </button>
+                </div>
                 <br/>
 
                 <button type="submit">Sign Up</button>

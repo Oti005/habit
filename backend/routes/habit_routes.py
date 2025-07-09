@@ -1,79 +1,95 @@
 from flask import Blueprint, request, jsonify
 from backend import db
-from backend.models import Habit
-from backend.utils.auth import datetime
+from backend.models import Habit, HabitLog, Category
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_cors import cross_origin
 
 bp = Blueprint("habits", __name__, url_prefix="/api/habits")
 
 @bp.route("/", methods=["GET"])
 @jwt_required()
-#get all habits for a user
+@cross_origin(origins=["http://localhost:5173", "http://localhost:3000"], supports_credentials=True)
 def get_habits():
-    user_id = get_jwt_identity() #get the user ID from the JWT token
-    habits= Habit.query.filter_by(user_id=user_id).all()
-    result = [{
-        "id": h.id,
-        "name": h.name,
-        "description":h.description,
-        "frequency":h.frequency,
-        "category_id":h.category_id,
-        "created_at":h.created_at,
-       }
-       for h in habits
-    ]
+    user_id = get_jwt_identity()
+    habits = Habit.query.filter_by(user_id=user_id).all()
+    result = []
+    for h in habits:
+        result.append({
+            "id": h.id,
+            "title": h.title,
+            "description": h.description,
+            "frequency": h.frequency.split(",") if h.frequency else [],
+            "is_active": h.is_active,
+            "created_at": h.created_at,
+        })
     return jsonify(result), 200
-
-#creating a new habit
 
 @bp.route("/", methods=["POST"])
 @jwt_required()
+@cross_origin(origins=["http://localhost:5173", "http://localhost:3000"], supports_credentials=True)
 def create_habit():
     user_id = get_jwt_identity()
     data = request.get_json()
-    new_habit= Habit(
-        name=data.get("name"),
+    freq = ",".join(data.get("frequency", [])) if isinstance(data.get("frequency"), list) else data.get("frequency")
+    new_habit = Habit(
+        title=data.get("title"),
         description=data.get("description"),
-        frequency=data.get("frequency"),
-        category_id=data.get("category_id"),
-        user_id=user_id, #it will get the user_id form the JWT token instead of sending it in the request body
-        created_at=data.get("created_at")
+        frequency=freq,
+        user_id=user_id,
+        # created_at=data.get("created_at")
     )
-
     db.session.add(new_habit)
     db.session.commit()
-    return jsonify({"message": "Habit created", "habit_id": new_habit.id}),201
+    return jsonify({
+        "id": new_habit.id,
+        "title": new_habit.title,
+        "description": new_habit.description,
+        "frequency": new_habit.frequency.split(",") if new_habit.frequency else [],
+        "is_active": new_habit.is_active,
+        # "created_at": new_habit.created_at,
+    }), 201
 
-#updating a new message
-@bp.route("/<int:habit_id>", methods=["PUT"])
+@bp.route("/<int:habit_id>/logs", methods=["GET"])
 @jwt_required()
-def update_habit(habit_id):
+@cross_origin(origins=["http://localhost:5173", "http://localhost:3000"], supports_credentials=True)
+def get_habit_logs(habit_id):
     user_id = get_jwt_identity()
-    habit=Habit.query.filter_by(id=habit_id, user_id=user_id).first() #filtering by user_id to ensure the user can only update their own habits
-
-    #if the habit does not exist return an error
+    habit = Habit.query.filter_by(id=habit_id, user_id=user_id).first()
     if not habit:
         return jsonify({"error": "Habit not found"}), 404
-    
-    data=request.get_json()
-    habit.name=data.get("name",habit.name)
-    habit.description=data.get("description",habit.description)
-    habit.frequency=data.get("frequency", habit.frequency)
-    habit.category_id=data.get("category_id", habit.category_id)
+    logs = HabitLog.query.filter_by(habit_id=habit_id).all()
+    result = [{
+        "id": log.id,
+        "log_date": log.log_date,
+        "is_completed": log.is_completed,
+        "created_at": log.created_at,
+    } for log in logs]
+    return jsonify(result), 200
 
-    db.session.commit()
-    return jsonify({"message":"Habit updated"}), 200
-
-#deleting a habit
-@bp.route("/<int:habit_id>", methods=["DELETE"])
+@bp.route("/logs", methods=["GET"])
 @jwt_required()
-def delete_habit(habit_id):
+@cross_origin(origins=["http://localhost:5173", "http://localhost:3000"], supports_credentials=True)
+def get_logs():
     user_id = get_jwt_identity()
-    habit=Habit.query.filter_by(id=habit_id, user_id=user_id).first()
-    if not habit:
-        return jsonify({"error": "Habit not found"}), 404
-    
-    db.session.delete(habit)
-    db.session.commit()
-    return jsonify({"message": "habit deleted"}), 200
+    habits = Habit.query.filter_by(user_id=user_id).all()
+    logs = []
+    for habit in habits:
+        for log in habit.logs:
+            logs.append({
+                "id": log.id,
+                "habit_id": habit.id,
+                "title": habit.title,
+                "is_completed": log.is_completed,
+                "date_completed": log.log_date,
+            })
+    return jsonify(logs), 200
 
+# Add a categories endpoint
+@bp.route("/categories", methods=["GET"])
+@jwt_required()
+@cross_origin(origins=["http://localhost:5173", "http://localhost:3000"], supports_credentials=True)
+def get_categories():
+    user_id = get_jwt_identity()
+    categories = Category.query.filter_by(user_id=user_id).all()
+    result = [{"id": c.id, "name": c.name} for c in categories]
+    return jsonify(result), 200

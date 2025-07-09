@@ -20,7 +20,7 @@ class Habit(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text)
-    frequency = db.Column(db.Enum('daily', 'weekly', 'monthly'), default='daily')
+    frequency = db.Column(db.String(100))  # e.g. "daily,weekly"
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 

@@ -33,26 +33,34 @@ const Dashboard = () => {
           return;
         }
 
-
-        const habitsRes = await fetch("http://localhost:5000/api/habits", {
-          headers: {
-            Authorization: 'Bearer ${token}',
-          }
+        // Habits
+        const habitsRes = await fetch("http://localhost:5000/api/habits/", {
+          headers: { Authorization: `Bearer ${token}` }
         });
+        if (!habitsRes.ok) {
+          const text = await habitsRes.text();
+          throw new Error(`Habits fetch failed: ${habitsRes.status} - ${text}`);
+        }
         const habitsData = await habitsRes.json();
 
+        // Logs (if you have this endpoint)
         const logsRes = await fetch("http://localhost:5000/api/habits/logs", {
-          headers: {
-            Authorization: 'Bearer ${token}',
-          }
+          headers: { Authorization: `Bearer ${token}` }
         });
+        if (!logsRes.ok) {
+          const text = await logsRes.text();
+          throw new Error(`Logs fetch failed: ${logsRes.status} - ${text}`);
+        }
         const logsData = await logsRes.json();
 
-        const categoriesRes = await fetch("http://localhost:5000/api/categories", {
-          headers: {
-            Authorization: 'Bearer ${token}',
-          }
+        // Categories (if you have this endpoint)
+        const categoriesRes = await fetch("http://localhost:5000/api/habits/categories", {
+          headers: { Authorization: `Bearer ${token}` }
         });
+        if (!categoriesRes.ok) {
+          const text = await categoriesRes.text();
+          throw new Error(`Categories fetch failed: ${categoriesRes.status} - ${text}`);
+        }
         const categoriesData = await categoriesRes.json();
 
         setHabits(habitsData);
