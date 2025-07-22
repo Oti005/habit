@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "../styles/habits.css";
 
 const HabitForm = ({ onAddHabit }) => {
   const [title, setTitle] = useState("");
@@ -19,12 +20,13 @@ const HabitForm = ({ onAddHabit }) => {
       alert("Please log in first.");
       return;
     }
+
     const newHabit = {
       title,
       description,
       frequency,
-      // created_at: new Date().toISOString(),
     };
+
     try {
       const response = await fetch("http://localhost:5000/api/habits/", {
         method: "POST",
@@ -34,6 +36,7 @@ const HabitForm = ({ onAddHabit }) => {
         },
         body: JSON.stringify(newHabit),
       });
+
       const data = await response.json();
       if (response.ok) {
         onAddHabit(data);
@@ -49,25 +52,37 @@ const HabitForm = ({ onAddHabit }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 mb-6 bg-white p-4 rounded-x1 shadow-md">
-      <h2 className="text-1 font-semibold text-gray-700">Add New Habit</h2>
-      <input type="text" placeholder="Habit name" value={title}
+    <form
+      onSubmit={handleSubmit}
+      className="habit-form"
+    >
+      <h2 className="habit-form-title">Add New Habit</h2>
+
+      <input
+        type="text"
+        placeholder="Habit name"
+        value={title}
         onChange={(e) => setTitle(e.target.value)}
         className="habit-input"
-        required />
-      <textarea placeholder="Habit Description (Optional)"
+        required
+      />
+
+      <textarea
+        placeholder="Habit Description (Optional)"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         className="habit-input"
       />
-      <div>
+
+      <div className="habit-checkbox-group mb-3 flex gap-4">
         <label>
           <input
             type="checkbox"
             value="daily"
             checked={frequency.includes("daily")}
             onChange={handleFrequencyChange}
-          /> Daily
+          />{" "}
+          Daily
         </label>
         <label>
           <input
@@ -75,7 +90,8 @@ const HabitForm = ({ onAddHabit }) => {
             value="weekly"
             checked={frequency.includes("weekly")}
             onChange={handleFrequencyChange}
-          /> Weekly
+          />{" "}
+          Weekly
         </label>
         <label>
           <input
@@ -83,12 +99,16 @@ const HabitForm = ({ onAddHabit }) => {
             value="monthly"
             checked={frequency.includes("monthly")}
             onChange={handleFrequencyChange}
-          /> Monthly
+          />{" "}
+          Monthly
         </label>
       </div>
-      <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
-        Add Habit
-      </button>
+
+      <div className="habit-form-actions">
+        <button type="submit" className="habit-submit-btn">
+          Add Habit
+        </button>
+      </div>
     </form>
   );
 };

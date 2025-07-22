@@ -22,7 +22,7 @@ body {
   border-bottom-right-radius: 18px;
   display: flex;
   justify-content: center;
-  margin-bottom: 20.5rem; /* Increased for more space */
+  margin-bottom: 2.5rem; /* Increased for more space */
   /* Or add padding-bottom: 1rem; for extra space inside */
 }
 
